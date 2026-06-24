@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Cozy | 도심 속 작은 휴식처</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR (기본), Playfair Display (강조) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons (아이콘용) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        cozy: {
+                            50: '#faf7f2',
+                            100: '#f1ebd9',
+                            200: '#e3d6b6',
+                            300: '#d1ba8c',
+                            400: '#c09c65',
+                            500: '#b2834b',
+                            600: '#a36d40',
+                            700: '#885638',
+                            800: '#704732',
+                            900: '#5c3b2b',
+                            950: '#321e16',
+                        }
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #faf7f2; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1ba8c; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b2834b; 
+        }
+        
+        /* 유틸리티 클래스 */
+        .glass-nav {
+            background: rgba(250, 247, 242, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(209, 186, 140, 0.2);
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 메뉴 이미지 호버 효과 */
+        .menu-card:hover .menu-img {
+            transform: scale(1.05);
+        }
+        .menu-img {
+            transition: transform 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-cozy-50 text-cozy-900 antialiased font-sans flex flex-col min-h-screen">
+
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- 로고 -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="font-serif text-2xl font-bold text-cozy-800 tracking-wider">Cafe Cozy.</a>
+                </div>
+                
+                <!-- 데스크탑 메뉴 -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#about" class="text-cozy-700 hover:text-cozy-500 transition-colors duration-200 text-sm font-medium uppercase tracking-widest">Story</a>
+                    <a href="#menu" class="text-cozy-700 hover:text-cozy-500 transition-colors duration-200 text-sm font-medium uppercase tracking-widest">Menu</a>
+                    <a href="#gallery" class="text-cozy-700 hover:text-cozy-500 transition-colors duration-200 text-sm font-medium uppercase tracking-widest">Gallery</a>
+                    <a href="#location" class="bg-cozy-800 text-cozy-50 px-5 py-2.5 rounded-full hover:bg-cozy-600 transition-colors duration-300 text-sm font-medium uppercase tracking-widest shadow-md">Visit Us</a>
+                </div>
+
+                <!-- 모바일 메뉴 버튼 -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-cozy-800 focus:outline-none p-2" aria-label="메뉴 열기">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 모바일 드롭다운 메뉴 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cozy-50 border-t border-cozy-200 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-2 flex flex-col items-center">
+                <a href="#about" class="block px-3 py-3 text-base font-medium text-cozy-800 hover:text-cozy-500 hover:bg-cozy-100 rounded-md w-full text-center mobile-link">Story</a>
+                <a href="#menu" class="block px-3 py-3 text-base font-medium text-cozy-800 hover:text-cozy-500 hover:bg-cozy-100 rounded-md w-full text-center mobile-link">Menu</a>
+                <a href="#gallery" class="block px-3 py-3 text-base font-medium text-cozy-800 hover:text-cozy-500 hover:bg-cozy-100 rounded-md w-full text-center mobile-link">Gallery</a>
+                <a href="#location" class="block mt-4 px-6 py-3 text-base font-medium text-white bg-cozy-800 hover:bg-cozy-600 rounded-full w-max text-center mobile-link shadow-md">Visit Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+            <!-- 배경 이미지 및 오버레이 -->
+            <div class="absolute inset-0 bg-hero-pattern bg-cover bg-center bg-no-repeat bg-fixed"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
+            
+            <!-- 콘텐츠 -->
+            <div class="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+                <h2 class="text-cozy-100 text-lg md:text-xl font-medium tracking-[0.3em] uppercase mb-4 fade-in-up">Welcome to</h2>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif text-white font-bold mb-6 drop-shadow-lg fade-in-up delay-100">Cafe Cozy</h1>
+                <p class="text-cozy-50 text-base md:text-lg lg:text-xl font-light mb-10 max-w-2xl mx-auto leading-relaxed fade-in-up delay-200 shadow-sm">
+                    바쁜 일상 속, 온전한 쉼표가 되는 공간.<br class="hidden md:block">
+                    정성껏 내린 커피 한 잔과 함께 당신만의 여유를 찾아보세요.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 fade-in-up delay-300">
+                    <a href="#menu" class="px-8 py-4 bg-white text-cozy-900 font-medium rounded-full hover:bg-cozy-100 transition-colors shadow-lg uppercase tracking-wider text-sm border border-transparent">메뉴 보기</a>
+                    <a href="#location" class="px-8 py-4 bg-transparent text-white font-medium rounded-full hover:bg-white/10 transition-colors border-2 border-white/80 shadow-lg uppercase tracking-wider text-sm">찾아오시는 길</a>
+                </div>
+            </div>
+            
+            <!-- 스크롤 인디케이터 -->
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce flex flex-col items-center">
+                <span class="text-white/70 text-xs tracking-widest uppercase mb-2">Scroll</span>
+                <i class="ph ph-caret-down text-white/70 text-xl"></i>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-cozy-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center gap-16 lg:gap-24">
+                    <!-- 텍스트 영역 -->
+                    <div class="w-full md:w-1/2 space-y-8">
+                        <div class="inline-flex items-center gap-4">
+                            <div class="w-12 h-px bg-cozy-400"></div>
+                            <span class="text-cozy-600 uppercase tracking-widest text-sm font-semibold">Our Story</span>
+                        </div>
+                        <h2 class="text-4xl md:text-5xl font-serif text-cozy-900 leading-tight">
+                            커피 한 잔에 담긴<br>따뜻한 위로
+                        </h2>
+                        <p class="text-cozy-700 leading-relaxed text-lg font-light">
+                            카페 코지는 단순한 커피숍을 넘어, 누구나 편안하게 머물다 갈 수 있는 안식처를 지향합니다. 매일 아침 엄선된 스페셜티 생두를 직접 로스팅하여 신선하고 풍부한 향을 선사합니다.
+                        </p>
+                        <p class="text-cozy-700 leading-relaxed text-lg font-light">
+                            따스한 햇살이 들어오는 창가 자리, 잔잔하게 흐르는 재즈 선율, 그리고 갓 구운 베이커리의 향기. 이 모든 것들이 어우러져 당신의 일상에 작은 특별함을 더해줄 것입니다.
+                        </p>
+                        
+                        <div class="pt-4 grid grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="font-serif text-3xl text-cozy-800 mb-2">Since 2021</h3>
+                                <p class="text-sm text-cozy-600">지역 주민들과 함께 성장해 온 로컬 카페</p>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-3xl text-cozy-800 mb-2">100%</h3>
+                                <p class="text-sm text-cozy-600">직접 로스팅한 스페셜티 원두 사용</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 이미지 영역 -->
+                    <div class="w-full md:w-1/2 relative">
+                        <div class="relative rounded-t-full rounded-b-3xl overflow-hidden shadow-2xl aspect-[4/5] z-10">
+                            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="카페 내부 전경" class="object-cover w-full h-full">
+                        </div>
+                        <!-- 장식용 배경 요소 -->
+                        <div class="absolute -bottom-8 -right-8 w-64 h-64 bg-cozy-200 rounded-full blur-3xl opacity-50 z-0"></div>
+                        <div class="absolute -top-8 -left-8 w-48 h-48 bg-cozy-300 rounded-full blur-2xl opacity-30 z-0"></div>
+                        <div class="absolute bottom-10 -left-10 bg-white p-6 rounded-2xl shadow-xl z-20 w-48">
+                            <i class="ph-fill ph-coffee text-4xl text-cozy-600 mb-2"></i>
+                            <p class="font-medium text-cozy-900">전문 바리스타의<br>섬세한 핸드드립</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-cozy-950 text-cozy-50 relative">
+            <!-- 텍스처 배경 힌트 -->
+            <div class="absolute inset-0 opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'#ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            
+            <div class="max-w-7xl mx-auto relative z-10">
+                <div class="text-center mb-16 md:mb-24">
+                    <span class="text-cozy-400 uppercase tracking-widest text-sm font-semibold mb-3 block">Signature</span>
+                    <h2 class="text-4xl md:text-5xl font-serif text-white mb-6">시그니처 메뉴</h2>
+                    <p class="text-cozy-200 max-w-2xl mx-auto text-lg font-light">
+                        오직 카페 코지에서만 맛볼 수 있는 특별한 블렌딩과 수제 디저트
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- 메뉴 아이템 1 -->
+                    <div class="menu-card group cursor-pointer">
+                        <div class="overflow-hidden rounded-2xl mb-6 aspect-square shadow-xl relative">
+                            <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="코지 크림 라떼" class="menu-img w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-2xl font-serif text-white">코지 크림 라떼</h3>
+                            <span class="text-cozy-400 font-medium">6.5</span>
+                        </div>
+                        <p class="text-cozy-300 font-light text-sm">
+                            진한 에스프레소 위 수제 아몬드 크림이 올라간 시그니처 아인슈페너
+                        </p>
+                    </div>
+
+                    <!-- 메뉴 아이템 2 -->
+                    <div class="menu-card group cursor-pointer">
+                        <div class="overflow-hidden rounded-2xl mb-6 aspect-square shadow-xl relative">
+                            <img src="https://images.unsplash.com/photo-1550878171-a923d0739b10?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="싱글 오리진 브루잉" class="menu-img w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-2xl font-serif text-white">싱글 오리진 브루잉</h3>
+                            <span class="text-cozy-400 font-medium">7.0~</span>
+                        </div>
+                        <p class="text-cozy-300 font-light text-sm">
+                            매주 달라지는 스페셜티 원두를 바리스타가 직접 내려주는 필터 커피
+                        </p>
+                    </div>
+
+                    <!-- 메뉴 아이템 3 -->
+                    <div class="menu-card group cursor-pointer">
+                        <div class="overflow-hidden rounded-2xl mb-6 aspect-square shadow-xl relative">
+                            <img src="https://images.unsplash.com/photo-1579954115545-a95591f28bfc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="수제 바스크 치즈케이크" class="menu-img w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                        </div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-2xl font-serif text-white">바스크 치즈케이크</h3>
+                            <span class="text-cozy-400 font-medium">6.0</span>
+                        </div>
+                        <p class="text-cozy-300 font-light text-sm">
+                            매장에서 매일 직접 굽는 겉바속촉 고소한 스페인식 치즈케이크
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-16 text-center">
+                    <a href="#" class="inline-flex items-center gap-2 text-cozy-300 hover:text-white transition-colors pb-1 border-b border-cozy-500 hover:border-white">
+                        <span>전체 메뉴 보기</span>
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                    <div>
+                        <span class="text-cozy-600 uppercase tracking-widest text-sm font-semibold mb-3 block">Atmosphere</span>
+                        <h2 class="text-4xl md:text-5xl font-serif text-cozy-900">공간의 무드</h2>
+                    </div>
+                    <p class="text-cozy-600 max-w-md mt-4 md:mt-0 md:text-right font-light">
+                        계절의 변화를 느낄 수 있는 창가 자리와 조용히 책을 읽기 좋은 안쪽 공간까지.
+                    </p>
+                </div>
+
+                <!-- 벤토(Bento) 스타일 그리드 갤러리 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[200px] md:auto-rows-[250px]">
+                    <div class="col-span-2 row-span-2 rounded-2xl overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="매장 인테리어" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-300 flex items-end p-6">
+                            <span class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">햇살 가득한 창가석</span>
+                        </div>
+                    </div>
+                    <div class="rounded-2xl overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1507133750070-4402613beaa0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="커피 추출" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="rounded-2xl overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="원두" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="col-span-2 rounded-2xl overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1445116572660-236099ce3073?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="야외 테라스" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="location" class="py-24 bg-cozy-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+                    
+                    <!-- 위치 정보 텍스트 -->
+                    <div class="w-full lg:w-5/12 p-10 md:p-16 flex flex-col justify-center bg-white relative z-10">
+                        <span class="text-cozy-600 uppercase tracking-widest text-sm font-semibold mb-4 block">Visit Us</span>
+                        <h2 class="text-4xl font-serif text-cozy-900 mb-8">찾아오시는 길</h2>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-cozy-100 text-cozy-700 flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="ph-fill ph-map-pin"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-cozy-900 mb-1">주소</h4>
+                                    <p class="text-cozy-600 font-light">서울특별시 강남구 테헤란로 123길 45<br>1층 카페 코지</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-cozy-100 text-cozy-700 flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="ph-fill ph-clock"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-cozy-900 mb-1">영업시간</h4>
+                                    <p class="text-cozy-600 font-light">평일: 08:00 - 22:00<br>주말/공휴일: 10:00 - 22:00</p>
+                                    <p class="text-cozy-500 text-sm mt-1">* 라스트 오더: 21:30</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-cozy-100 text-cozy-700 flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="ph-fill ph-phone"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-cozy-900 mb-1">문의</h4>
+                                    <p class="text-cozy-600 font-light">02-1234-5678</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex gap-4">
+                            <!-- 네이버 지도 링크 버튼 (요청하신 URL 연결) -->
+                            <a href="https://map.naver.com/p/search/%EC%B9%B4%ED%8E%98/place/1263200282" target="_blank" rel="noopener noreferrer" class="flex-1 bg-[#03C75A] hover:bg-[#02b351] text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors shadow-md">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.0355 0H7.96556L0 23.9992H8.3846L10.3644 18.0673H17.2081L19.1678 23.9992H24L16.0355 0ZM11.6433 13.5683L13.8864 6.83984L16.027 13.5683H11.6433Z" fill="white"/>
+                                </svg>
+                                네이버 지도로 보기
+                            </a>
+                            <!-- 복사 버튼 -->
+                            <button onclick="copyAddress()" class="w-12 h-12 bg-white border-2 border-cozy-200 text-cozy-700 rounded-xl flex items-center justify-center hover:bg-cozy-50 transition-colors" aria-label="주소 복사">
+                                <i class="ph ph-copy text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 지도 영역 (iframe 대신 장식용 지도 이미지 사용, 실제 적용시 네이버/카카오 지도 API 또는 iframe 사용 권장) -->
+                    <div class="w-full lg:w-7/12 h-80 lg:h-auto bg-gray-200 relative">
+                        <!-- 실제 구현 시 아래 img 대신 네이버 지도 iframe을 넣으세요 -->
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="지도 위치" class="w-full h-full object-cover">
+                        
+                        <!-- 중앙 마커 장식 -->
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                            <div class="bg-cozy-800 text-white px-4 py-2 rounded-lg shadow-lg font-bold mb-2 flex items-center gap-2">
+                                <i class="ph-fill ph-coffee"></i> Cafe Cozy
+                            </div>
+                            <div class="w-4 h-4 bg-cozy-800 transform rotate-45 -mt-3"></div>
+                            <div class="w-8 h-8 bg-cozy-800/30 rounded-full animate-ping absolute top-10"></div>
+                            <div class="w-3 h-3 bg-cozy-800 rounded-full border-2 border-white shadow mt-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-cozy-950 text-cozy-200 py-12 border-t border-cozy-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+                <div class="text-center md:text-left">
+                    <a href="#" class="font-serif text-2xl font-bold text-white tracking-wider mb-4 block">Cafe Cozy.</a>
+                    <p class="text-sm text-cozy-400 max-w-xs">
+                        도심 속 작은 휴식처.<br>
+                        당신의 소중한 하루, 따뜻한 커피 한 잔과 함께합니다.
+                    </p>
+                </div>
+                
+                <div class="flex gap-6">
+                    <a href="#" class="w-10 h-10 rounded-full bg-cozy-900 flex items-center justify-center hover:bg-cozy-800 hover:text-white transition-colors" aria-label="Instagram">
+                        <i class="ph ph-instagram-logo text-xl"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-cozy-900 flex items-center justify-center hover:bg-cozy-800 hover:text-white transition-colors" aria-label="Facebook">
+                        <i class="ph ph-facebook-logo text-xl"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-cozy-900 flex items-center justify-center hover:bg-cozy-800 hover:text-white transition-colors" aria-label="Blog">
+                        <i class="ph ph-article text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-cozy-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-cozy-500">
+                <p>&copy; 2026 Cafe Cozy. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-cozy-300">이용약관</a>
+                    <a href="#" class="hover:text-cozy-300">개인정보처리방침</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 메시지 토스트 (알림용) -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-cozy-800 text-white px-6 py-3 rounded-full shadow-xl transition-all duration-300 opacity-0 translate-y-10 z-50 pointer-events-none">
+        주소가 클립보드에 복사되었습니다.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. 네비게이션 바 스크롤 효과
+            const navbar = document.getElementById('navbar');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('glass-nav', 'py-0');
+                    navbar.classList.remove('py-2');
+                } else {
+                    navbar.classList.remove('glass-nav', 'py-0');
+                    navbar.classList.add('py-2');
+                }
+            });
+
+            // 초기 로드 시 체크
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-nav');
+            }
+
+            // 2. 모바일 메뉴 토글
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            const menuIcon = mobileMenuBtn.querySelector('i');
+
+            function toggleMenu() {
+                mobileMenu.classList.toggle('hidden');
+                if (mobileMenu.classList.contains('hidden')) {
+                    menuIcon.classList.replace('ph-x', 'ph-list');
+                } else {
+                    menuIcon.classList.replace('ph-list', 'ph-x');
+                }
+            }
+
+            mobileMenuBtn.addEventListener('click', toggleMenu);
+
+            // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        toggleMenu();
+                    }
+                });
+            });
+
+            // 3. 스크롤 애니메이션 (Intersection Observer)
+            // 헤더 요소들은 초기에 CSS로 애니메이션 적용됨
+            // 다른 섹션들의 부드러운 등장을 원한다면 아래 옵저버 활용 가능
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // 필요한 경우 클래스 추가하여 애니메이션 트리거
+                        // entry.target.classList.add('animate');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // 4. 주소 복사 기능 및 토스트 알림
+        function copyAddress() {
+            const addressText = "서울특별시 강남구 테헤란로 123길 45 1층 카페 코지"; // 임시 주소
+            
+            // Clipboard API 사용 불가 환경 대비 execCommand 폴백 사용
+            const tempInput = document.createElement("input");
+            tempInput.value = addressText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand("copy");
+                showToast();
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                // alert() 대신 커스텀 토스트 메시지 변경
+                const toast = document.getElementById('toast');
+                toast.textContent = "복사에 실패했습니다.";
+                showToast();
+            }
+            
+            document.body.removeChild(tempInput);
+        }
+
+        // 토스트 알림 표시 함수
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            // 3초 후 숨김
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-10');
+                
+                // 텍스트 초기화
+                setTimeout(() => {
+                    toast.textContent = "주소가 클립보드에 복사되었습니다.";
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
